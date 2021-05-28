@@ -1,6 +1,7 @@
 package com.clona.chat.controllers;
 
 import java.util.Date;
+import java.util.Random;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -14,6 +15,8 @@ import com.clona.chat.models.Mensaje;
 @Controller
 public class ChatController {
 	
+	private String[] colores = {"red","blue","green","purple","orange"};
+	
 	/*
 	 * No cal indicar el prefixe que tenim configurat WebSocketConfig
 	 * configureMessageBroker -> ApplicationDestinationPrefixes
@@ -25,8 +28,21 @@ public class ChatController {
 	public Mensaje recibeMensaje(Mensaje mensaje) {
 		//Podem fer quelcom amb el missatge que rebem
 		mensaje.setFecha(new Date().getTime());
-		mensaje.setTexto("Recibido por el broker: "+mensaje.getTexto());
-		
+		if(mensaje.getTipo().equals("NUEVO_USUARIO")) {
+			mensaje.setColor(colores[new Random().nextInt(colores.length)]);
+			mensaje.setTexto("Nuevo usuario: "+mensaje.getUsername());
+		}else {
+			mensaje.setTexto(mensaje.getTexto());
+		}
+
+		//Retornem el missatge que serà rebut per tothom del que estigui subscrit
+		//al clientStomp de angular.
 		return mensaje;
+	}
+	
+	@MessageMapping("/escribiendo")
+	@SendTo("/chat/escribiendo")
+	public String estaEscribiendo(String username) {
+		return username.concat(" Esta escribiendo...");
 	}
 }

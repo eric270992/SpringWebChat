@@ -36,7 +36,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 		 * Desti de quant publiquem un missatge, per tant sempre que volguem una ruta de desti anirà
 		 * amb el prefixe /app
 		 */
-		registry.setApplicationDestinationPrefixes("/app/");
+		registry.setApplicationDestinationPrefixes("/app");
 	}
 
 	
